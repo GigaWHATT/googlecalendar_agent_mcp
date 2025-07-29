@@ -159,13 +159,13 @@ dependencies = [
     { name = "google-api-python-client" },
     { name = "google-auth-httplib2" },
     { name = "google-auth-oauthlib" },
+    { name = "loguru" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "deptry" },
     { name = "interrogate" },
-    { name = "loguru" },
     { name = "pre-commit" },
     { name = "vulture" },
 ]
@@ -175,13 +175,13 @@ requires-dist = [
     { name = "google-api-python-client", specifier = ">=2.177.0" },
     { name = "google-auth-httplib2", specifier = ">=0.2.0" },
     { name = "google-auth-oauthlib", specifier = ">=1.2.2" },
+    { name = "loguru", specifier = ">=0.7.3" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "deptry", specifier = ">=0.23.0" },
     { name = "interrogate", specifier = ">=1.7.0" },
-    { name = "loguru", specifier = ">=0.7.3" },
     { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "vulture", specifier = ">=2.14" },
 ]

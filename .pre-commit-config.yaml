@@ -21,10 +21,10 @@ repos:
       - id: bandit
         args: ["-c", "pyproject.toml"]
         additional_dependencies: ["bandit[toml]"]
-  # - repo: https://github.com/fpgmaas/deptry.git
-  #   rev: 0.23.0
-  #   hooks:
-  #     - id: deptry
+  - repo: https://github.com/fpgmaas/deptry.git
+    rev: 0.23.0
+    hooks:
+      - id: deptry
   - repo: https://github.com/econchick/interrogate
     rev: 1.7.0
     hooks:

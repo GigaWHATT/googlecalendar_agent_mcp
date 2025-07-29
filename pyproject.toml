@@ -8,13 +8,17 @@ dependencies = [
     "google-api-python-client>=2.177.0",
     "google-auth-httplib2>=0.2.0",
     "google-auth-oauthlib>=1.2.2",
+    "loguru>=0.7.3",
 ]
+
+[tool.deptry.per_rule_ignores]
+DEP002 = ["google-auth-httplib2"]
+DEP003 = ["google"]
 
 [dependency-groups]
 dev = [
     "deptry>=0.23.0",
     "interrogate>=1.7.0",
-    "loguru>=0.7.3",
     "pre-commit>=4.2.0",
     "vulture>=2.14",
 ]
