@@ -1,9 +1,12 @@
 """Main module for g-calendar."""
 
+# ------IMPORTS---------
+from loguru import logger
+
 
 def main():
     """Main function, prints a greeting."""
-    print("Hello from g-calendar!")
+    logger.info("Hello from g-calendar!")
     return None
 
 
