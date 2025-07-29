@@ -3,6 +3,9 @@
 # -------IMPORTS---------
 import datetime
 import os.path
+from loguru import logger
+
+from mcp.server.fastmcp import FastMCP
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -14,6 +17,10 @@ from googleapiclient.errors import HttpError
 # -------INITIALIZATION---------
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
+
+mcp = FastMCP("Google Calendar Agent")
+
+CALENDAR_ID = "primary"  # Default calendar ID for the authenticated user
 
 
 def init():
@@ -37,18 +44,21 @@ def init():
     return creds
 
 
-def access_events(creds):
-    """Accesses the user's Google Calendar events"""
-    try:
-        service = build("calendar", "v3", credentials=creds)
+# -------FUNCTIONALITIES---------
 
+
+@mcp.tool()
+def get_events():
+    """Accesses the user's Google Calendar events"""
+    logger.info("Accessing Google Calendar events...")
+    try:
         # Call the Calendar API
         now = datetime.datetime.now(tz=datetime.UTC).isoformat()
         print("Getting the upcoming 10 events")
         events_result = (
-            service.events()
+            calendar.events()
             .list(
-                calendarId="primary",
+                calendarId=CALENDAR_ID,
                 timeMin=now,
                 maxResults=10,
                 singleEvents=True,
@@ -56,21 +66,19 @@ def access_events(creds):
             )
             .execute()
         )
-        events = events_result.get("items", [])
+        response = events_result.get("items", [])
 
-        if not events:
-            print("No upcoming events found.")
-            return
+        if not response:
+            response = "No upcoming events found."
 
-        # Prints the start and name of the next 10 events
-        for event in events:
-            start = event["start"].get("dateTime", event["start"].get("date"))
-            print(start, event["summary"])
+        return response
 
     except HttpError as error:
-        print(f"An error occurred: {error}")
+        return {"error": str(error)}
 
 
 if __name__ == "__main__":
     creds = init()
-    access_events(creds)
+    calendar = build("calendar", "v3", credentials=creds)
+    logger.info("Google Calendar Agent is running...")
+    mcp.run()

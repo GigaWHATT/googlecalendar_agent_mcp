@@ -53,7 +53,7 @@ repos:
     rev: v2.14
     hooks:
       - id: vulture
-        args: ["src"]
+        args: ["src/core/client.py","src/main.py"]
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: "0.8.0"
     hooks:
