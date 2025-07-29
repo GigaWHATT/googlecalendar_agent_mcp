@@ -1,0 +1,15 @@
+[project]
+name = "g-calendar"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "deptry>=0.23.0",
+    "interrogate>=1.7.0",
+    "pre-commit>=4.2.0",
+    "vulture>=2.14",
+]
