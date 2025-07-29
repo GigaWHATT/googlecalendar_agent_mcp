@@ -13,13 +13,11 @@ from googleapiclient.errors import HttpError
 
 # -------INITIALIZATION---------
 # If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 
-def main():
-    """Shows basic usage of the Google Calendar API.
-    Prints the start and name of the next 10 events on the user's calendar.
-    """
+def init():
+    """Connects to Google Calendar API"""
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -36,7 +34,11 @@ def main():
         # Save the credentials for the next run
         with open("token.json", "w") as token:
             token.write(creds.to_json())
+    return creds
 
+
+def access_events(creds):
+    """Accesses the user's Google Calendar events"""
     try:
         service = build("calendar", "v3", credentials=creds)
 
@@ -70,4 +72,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    creds = init()
+    access_events(creds)
