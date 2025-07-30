@@ -84,7 +84,6 @@ def create_event(
     title: str,
     end_date: datetime.date | None = None,
     end_time: datetime.time | None = None,
-    date_type: str | None = "event",
 ) -> str:
     """Creates an event in the user's Google calendar.
 
@@ -94,7 +93,6 @@ def create_event(
         title (str): title of event
         end_date (Optional[datetime.date], optional): end date of event. Defaults to None.
         end_time (Optional[datetime.time], optional): end time of event. Defaults to None.
-        date_type (Optional[str], optional): can be either event, task or appointment. Defaults to 'event'.
 
     Returns:
         _type_: result or error message
@@ -120,12 +118,7 @@ def create_event(
         }
         logger.info(f"Creating event: {event}")
 
-        if date_type == "event":
-            calendar.events().insert(calendarId=CALENDAR_ID, body=event).execute()
-        elif date_type == "task":
-            calendar.tasks().insert(calendarId=CALENDAR_ID, body=event).execute()
-        elif date_type == "appointment":
-            calendar.appointments().insert(calendarId=CALENDAR_ID, body=event).execute()
+        calendar.events().insert(calendarId=CALENDAR_ID, body=event).execute()
 
         return f"Event '{title}' created successfully."
 
