@@ -79,16 +79,16 @@ def get_events():
 
 @mcp.tool()
 def create_event(
-    start_date: datetime.date,
     start_time: datetime.time,
     title: str,
+    start_date: datetime.date | None = datetime.date.today(),
     end_date: datetime.date | None = None,
     end_time: datetime.time | None = None,
 ) -> str:
     """Creates an event in the user's Google calendar.
 
     Args:
-        start_date (datetime.date): date of start of event
+        start_date (datetime.date): date of start of event. Defaults to today.
         start_time (datetime.time): time of start of event
         title (str): title of event
         end_date (Optional[datetime.date], optional): end date of event. Defaults to None.
@@ -140,21 +140,30 @@ def delete_event(name: str, date: datetime.date | None = None) -> str:
     """
     logger.info("Deleting an event from Google Calendar...")
     try:
-        if not date:
-            date = datetime.date.today()
-
-        # Search for the event by name and date
-        events_result = (
-            calendar.events()
-            .list(
-                calendarId=CALENDAR_ID,
-                timeMin=datetime.datetime.combine(date, datetime.time.min).isoformat(),
-                timeMax=datetime.datetime.combine(date, datetime.time.max).isoformat(),
-                q=name,
+        if date:
+            # Search for the event by name and date
+            events_result = (
+                calendar.events()
+                .list(
+                    calendarId=CALENDAR_ID,
+                    timeMin=datetime.datetime.combine(
+                        date, datetime.time.min
+                    ).isoformat(),
+                    timeMax=datetime.datetime.combine(
+                        date, datetime.time.max
+                    ).isoformat(),
+                    q=name,
+                )
+                .execute()
             )
-            .execute()
-        )
-        events = events_result.get("items", [])
+            events = events_result.get("items", [])
+
+        elif not date:
+            # Search for the event by name only
+            events_result = (
+                calendar.events().list(calendarId=CALENDAR_ID, q=name).execute()
+            )
+            events = events_result.get("items", [])
 
         if not events:
             return f"No event found with name '{name}' on {date}."
@@ -177,6 +186,3 @@ if __name__ == "__main__":
     logger.info("Google Calendar Agent is running...")
     mcp.run()
     # create_event(datetime.date(2025, 7, 3), datetime.time(10, 0), "Test Event")
-
-
-# TODO: fix time on create_event
