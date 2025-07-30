@@ -15,6 +15,7 @@ dependencies = [
 ]
 
 [tool.deptry.per_rule_ignores]
+DEP001 = ["core"]
 DEP002 = ["google-auth-httplib2"]
 DEP003 = ["google","requests"]
 

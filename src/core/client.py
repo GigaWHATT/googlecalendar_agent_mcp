@@ -3,7 +3,6 @@
 import os
 from openai import AzureOpenAI
 import json
-import asyncio
 from loguru import logger
 
 from mcp import ClientSession, StdioServerParameters
@@ -230,26 +229,3 @@ class MCPClient:
         """Cleans up resources and closes the client session."""
         # Closes server connections
         await self.exit_stack.aclose()
-
-
-async def main():
-    """Main function to run the MCP client."""
-    client = MCPClient()
-    # app = QApplication(sys.argv)
-    # window = ChatWindow(client)
-    # window.show()
-
-    # client.window = window
-
-    try:
-        # Connect to server
-        await client.connect_to_server("src/core/server.py")
-        # Launch chat loop
-        await client.chat_loop()
-    finally:
-        await client.cleanup()
-        # sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    asyncio.run(main())

@@ -1,16 +1,30 @@
 """Main module for g-calendar."""
 
 # ------IMPORTS---------
-from loguru import logger
+from core.client import MCPClient
+import asyncio
 
 
-def main():
-    """Main function, prints a greeting."""
-    logger.info("Hello from g-calendar!")
-    return None
+async def main():
+    """Main function to run the MCP client."""
+    client = MCPClient()
+    # app = QApplication(sys.argv)
+    # window = ChatWindow(client)
+    # window.show()
+
+    # client.window = window
+
+    try:
+        # Connect to server
+        await client.connect_to_server("src/core/server.py")
+        # Launch chat loop
+        await client.chat_loop()
+    finally:
+        await client.cleanup()
+        # sys.exit(app.exec())
 
 
 # -----------RUN-------------
 if __name__ == "__main__":
     # Run the main function when the script is executed.
-    main()
+    asyncio.run(main())
