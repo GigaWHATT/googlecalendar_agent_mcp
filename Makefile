@@ -3,3 +3,6 @@ server:
 
 client:
 	-python src/core/client.py
+
+check:
+	-pre-commit run --all-files

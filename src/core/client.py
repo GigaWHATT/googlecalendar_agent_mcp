@@ -27,7 +27,7 @@ class MCPClient:
         self.exit_stack = AsyncExitStack()
         self.azure = AzureOpenAI(
             api_version="2024-12-01-preview",
-            azure_endpoint="https://light-rag-models.openai.azure.com/",
+            azure_endpoint="https://sonepar-sandbox-openai.openai.azure.com/",
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
         )
 
@@ -111,8 +111,8 @@ class MCPClient:
             messages=messages,
             tool_choice="auto",
             tools=available_tools,
-            max_tokens=1000,
-            model="gpt-4o",
+            max_completion_tokens=1000,
+            model="o4-mini",
         )
 
         logger.info("Query and tools fed to model.")
@@ -190,8 +190,8 @@ class MCPClient:
 
                         # Feed LLM tool call results
                         response = self.azure.chat.completions.create(
-                            model="gpt-4o",
-                            max_tokens=1000,
+                            model="o4-mini",
+                            max_completion_tokens=1000,
                             messages=messages,
                             tools=available_tools,
                             tool_choice="auto",
