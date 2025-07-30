@@ -77,8 +77,66 @@ def get_events():
         return {"error": str(error)}
 
 
+@mcp.tool()
+def create_event(
+    start_date: datetime.date,
+    start_time: datetime.time,
+    title: str,
+    end_date: datetime.date | None = None,
+    end_time: datetime.time | None = None,
+    date_type: str | None = "event",
+) -> str:
+    """Creates an event in the user's Google calendar.
+
+    Args:
+        start_date (datetime.date): date of start of event
+        start_time (datetime.time): time of start of event
+        title (str): title of event
+        end_date (Optional[datetime.date], optional): end date of event. Defaults to None.
+        end_time (Optional[datetime.time], optional): end time of event. Defaults to None.
+        date_type (Optional[str], optional): can be either event, task or appointment. Defaults to 'event'.
+
+    Returns:
+        _type_: result or error message
+    """
+    logger.info("Creating a new event in Google Calendar...")
+    try:
+        if not end_date:
+            end_date = start_date
+
+        if not end_time:
+            end_time = (
+                datetime.datetime.combine(start_date, start_time)
+                + datetime.timedelta(hours=1)
+            ).time()
+
+        start_datetime = datetime.datetime.combine(start_date, start_time)
+        end_datetime = datetime.datetime.combine(end_date, end_time)
+
+        event = {
+            "summary": title,
+            "start": {"dateTime": start_datetime.isoformat(), "timeZone": "UTC"},
+            "end": {"dateTime": end_datetime.isoformat(), "timeZone": "UTC"},
+        }
+        logger.info(f"Creating event: {event}")
+
+        if date_type == "event":
+            calendar.events().insert(calendarId=CALENDAR_ID, body=event).execute()
+        elif date_type == "task":
+            calendar.tasks().insert(calendarId=CALENDAR_ID, body=event).execute()
+        elif date_type == "appointment":
+            calendar.appointments().insert(calendarId=CALENDAR_ID, body=event).execute()
+
+        return f"Event '{title}' created successfully."
+
+    except HttpError as error:
+        logger.info(f"HTTP error in create_event: {error}")
+        return {"error": str(error)}
+
+
 if __name__ == "__main__":
     creds = init()
     calendar = build("calendar", "v3", credentials=creds)
     logger.info("Google Calendar Agent is running...")
     mcp.run()
+    # create_event(datetime.date(2025, 7, 3), datetime.time(10, 0), "Test Event")

@@ -10,14 +10,14 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from contextlib import AsyncExitStack
 
+import datetime
 from dotenv import load_dotenv
 
 
 load_dotenv()
 
-SYSTEM_PROMPT = (
-    """You are a helpful assistant that can interact with various tools and prompts."""
-)
+SYSTEM_PROMPT = f"""You are a helpful assistant that can interact with various tools and prompts.
+    The current date is {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}."""
 
 
 class MCPClient:
