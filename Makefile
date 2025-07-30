@@ -6,3 +6,9 @@ client:
 
 check:
 	-pre-commit run --all-files
+
+save:
+	-git add .
+	-make check
+	-git add .
+	-git commit -m "$(M)"
