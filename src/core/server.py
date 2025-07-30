@@ -113,8 +113,8 @@ def create_event(
 
         event = {
             "summary": title,
-            "start": {"dateTime": start_datetime.isoformat(), "timeZone": "UTC"},
-            "end": {"dateTime": end_datetime.isoformat(), "timeZone": "UTC"},
+            "start": {"dateTime": start_datetime.isoformat(), "timeZone": "UTC+2"},
+            "end": {"dateTime": end_datetime.isoformat(), "timeZone": "UTC+2"},
         }
         logger.info(f"Creating event: {event}")
 
@@ -127,9 +127,56 @@ def create_event(
         return {"error": str(error)}
 
 
+@mcp.tool()
+def delete_event(name: str, date: datetime.date | None = None) -> str:
+    """Deletes an event from the user's Google calendar.
+
+    Args:
+        name (str): name of the event to delete
+        date (Optional[datetime.date], optional): date of the event to delete. Defaults to None.
+
+    Returns:
+        str: result or error message
+    """
+    logger.info("Deleting an event from Google Calendar...")
+    try:
+        if not date:
+            date = datetime.date.today()
+
+        # Search for the event by name and date
+        events_result = (
+            calendar.events()
+            .list(
+                calendarId=CALENDAR_ID,
+                timeMin=datetime.datetime.combine(date, datetime.time.min).isoformat(),
+                timeMax=datetime.datetime.combine(date, datetime.time.max).isoformat(),
+                q=name,
+            )
+            .execute()
+        )
+        events = events_result.get("items", [])
+
+        if not events:
+            return f"No event found with name '{name}' on {date}."
+
+        for event in events:
+            calendar.events().delete(
+                calendarId=CALENDAR_ID, eventId=event["id"]
+            ).execute()
+
+        return f"Event '{name}' on {date} deleted successfully."
+
+    except HttpError as error:
+        logger.info(f"HTTP error in delete_event: {error}")
+        return {"error": str(error)}
+
+
 if __name__ == "__main__":
     creds = init()
     calendar = build("calendar", "v3", credentials=creds)
     logger.info("Google Calendar Agent is running...")
     mcp.run()
     # create_event(datetime.date(2025, 7, 3), datetime.time(10, 0), "Test Event")
+
+
+# TODO: fix time on create_event
