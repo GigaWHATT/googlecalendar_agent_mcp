@@ -113,8 +113,11 @@ def create_event(
 
         event = {
             "summary": title,
-            "start": {"dateTime": start_datetime.isoformat(), "timeZone": "UTC+2"},
-            "end": {"dateTime": end_datetime.isoformat(), "timeZone": "UTC+2"},
+            "start": {
+                "dateTime": start_datetime.isoformat(),
+                "timeZone": "Europe/Paris",
+            },
+            "end": {"dateTime": end_datetime.isoformat(), "timeZone": "Europe/Paris"},
         }
         logger.info(f"Creating event: {event}")
 
@@ -180,9 +183,58 @@ def delete_event(name: str, date: datetime.date | None = None) -> str:
         return {"error": str(error)}
 
 
+@mcp.tool()
+def delay_event(time: datetime.timedelta, name: str) -> str:
+    """ "Delays an event in the user's Google calendar.
+
+    Args:
+        time (datetime.timedelta): time to delay the event by
+        event (str): name of event to delay
+
+    Returns:
+        str: result message or error
+    """
+    logger.info("Delaying an event in Google Calendar...")
+    try:
+        events_result = (
+            calendar.events()
+            .list(
+                calendarId=CALENDAR_ID,
+                q=name,
+            )
+            .execute()
+        )
+        events = events_result.get("items", [])
+        for event in events:
+            calendar.events().update(
+                calendarId=CALENDAR_ID,
+                eventId=event["id"],
+                body={
+                    "summary": event["summary"],
+                    "start": {
+                        "dateTime": (
+                            datetime.datetime.fromisoformat(event["start"]["dateTime"])
+                            + time
+                        ).isoformat(),
+                        "timeZone": "Europe/Paris",
+                    },
+                    "end": {
+                        "dateTime": (
+                            datetime.datetime.fromisoformat(event["end"]["dateTime"])
+                            + time
+                        ).isoformat(),
+                        "timeZone": "Europe/Paris",
+                    },
+                },
+            ).execute()
+        return f"Event '{event}' delayed by {time}."
+    except HttpError as error:
+        return {"error": str(error)}
+
+
 if __name__ == "__main__":
     creds = init()
     calendar = build("calendar", "v3", credentials=creds)
     logger.info("Google Calendar Agent is running...")
     mcp.run()
-    # create_event(datetime.date(2025, 7, 3), datetime.time(10, 0), "Test Event")
+    # delay_event(datetime.timedelta(hours=1), "Dinner with Claire")
