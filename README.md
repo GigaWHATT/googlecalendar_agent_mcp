@@ -26,7 +26,11 @@ pip install -r requirements.txt
 
 **Google API Credentials:**
 
-When you run the program for the first time, a window will appear asking you to login to your Google account. This happens only on the first run. Please follow the instructions on the pop-up.
+To set up authentication, you'll need to follow the instructions on <url>https://developers.google.com/workspace/calendar/api/quickstart/python?hl=en<url>.
+
+When you've created your client (as a Desktop Application) a pop-up will appear summarising your client's details. Click 'Download to JSON' and download the file as ```credentials.json``` into the root repository of this project.
+
+When you run the program for the first time (see 'Run the code' section), a window will appear asking you to login to your Google account. This happens only on the first run. Please follow the instructions on the pop-up.
 
 **Model accesses**
 
@@ -52,8 +56,6 @@ Use this command to run the code. After that, you're all set to interact with th
 ## Tools
 
 Here is a description of the provided tools.
-
-# Google Calendar Agent Tools
 
 ## get_events()
 
